@@ -23,6 +23,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
   background: var(--background);
@@ -46,4 +50,215 @@ a {
 
 ::selection {
   background: #e8d7a8;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+.field {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgb(11 31 58 / 0.12);
+  background: white;
+  padding: 0.85rem 1rem;
+  color: #0b1f3a;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field:focus {
+  border-color: #c4a35a;
+  box-shadow: 0 0 0 4px rgb(196 163 90 / 0.2);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  background: #0b1f3a;
+  color: #f4efe6;
+  padding: 0.8rem 1.4rem;
+  font-size: 0.95rem;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #14325c;
+  transform: translateY(-1px);
+}
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  background: #c4a35a;
+  color: #0b1f3a;
+  padding: 0.8rem 1.4rem;
+  font-weight: 500;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.btn-gold:hover {
+  background: #d4b56c;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgb(11 31 58 / 0.15);
+  background: transparent;
+  color: #0b1f3a;
+  padding: 0.8rem 1.4rem;
+  font-size: 0.95rem;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.btn-ghost:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
+.btn-soft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid rgb(11 31 58 / 0.1);
+  background: white;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.75rem;
+  color: #0b1f3a;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-soft:hover {
+  background: #0b1f3a;
+  color: #f4efe6;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgb(11 31 58 / 0.55);
+}
+
+.card-lift {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgb(11 31 58 / 0.1);
+}
+
+.img-zoom {
+  overflow: hidden;
+}
+
+.img-zoom img {
+  transition: transform 0.7s ease;
+}
+
+.img-zoom:hover img {
+  transform: scale(1.06);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  animation: rise 0.8s ease forwards;
+}
+
+.reveal-d1 { animation-delay: 0.1s; }
+.reveal-d2 { animation-delay: 0.2s; }
+.reveal-d3 { animation-delay: 0.3s; }
+.reveal-d4 { animation-delay: 0.45s; }
+
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.floaty {
+  animation: floaty 6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.gold-line {
+  height: 2px;
+  width: 3.5rem;
+  background: #c4a35a;
+}
+
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+.kenburns {
+  animation: kenburns 22s ease-out forwards;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(196 163 90 / 0.35); }
+  50% { box-shadow: 0 0 0 10px rgb(196 163 90 / 0); }
+}
+
+.pulse-gold {
+  animation: pulse-gold 2.8s ease-out infinite;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #ece6d8 25%, #f7f2e8 50%, #ece6d8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 1rem;
+}
+
+.chat-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(11 31 58 / 0.2) transparent;
+}
+
+.stat-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal, .floaty, .img-zoom img, .card-lift, .kenburns, .pulse-gold, .skeleton {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1;
+    transform: none;
+  }
 }

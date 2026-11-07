@@ -95,7 +95,7 @@ async function main() {
       preferredPlatform: MeetingPlatform.ZOOM,
       featured: true,
       photoUrl: '/uploads/photos/james.jpg',
-      paymentMethods: [{ type: 'Bank transfer', details: 'UK Faster Payments — details shared after booking' }],
+      paymentMethods: [{ type: 'Bank transfer', details: 'UK Faster Payments - details shared after booking' }],
       availability: [
         { dayOfWeek: 2, startMinute: 8 * 60, endMinute: 12 * 60 },
         { dayOfWeek: 4, startMinute: 8 * 60, endMinute: 12 * 60 },

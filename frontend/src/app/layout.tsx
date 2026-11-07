@@ -16,9 +16,18 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Merit English — Learn with professional teachers worldwide",
+  metadataBase: new URL("http://localhost:3000"),
+  title: {
+    default: "Merit English - Learn with professional teachers worldwide",
+    template: "%s · Merit English",
+  },
   description:
-    "Find experienced English teachers, arrange online lessons on Zoom or Google Meet, and pay your teacher directly.",
+    "Find experienced English teachers, arrange online lessons on Zoom or Google Meet, and pay your teacher directly. Teachers keep 100% of lesson fees.",
+  openGraph: {
+    title: "Merit English",
+    description: "A professional marketplace for online English lessons. Teachers keep 100% of lesson fees.",
+    images: ["/images/hero.jpg"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

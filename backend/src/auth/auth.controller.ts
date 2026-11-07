@@ -36,10 +36,12 @@ export class AuthController {
 
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
+    const cookie = this.cookieOptions();
     res.clearCookie(this.auth.cookieName(), {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
+      httpOnly: cookie.httpOnly,
+      sameSite: cookie.sameSite,
+      secure: cookie.secure,
+      path: cookie.path,
     });
     return { ok: true };
   }
@@ -55,13 +57,20 @@ export class AuthController {
     return this.auth.verifyEmail(token);
   }
 
-  private setCookie(res: Response, token: string) {
-    res.cookie(this.auth.cookieName(), token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: this.config.get('COOKIE_SECURE') === 'true',
+  private cookieOptions() {
+    const secure = this.config.get('COOKIE_SECURE') === 'true';
+    return {
+      httpOnly: true as const,
+      // Vercel (frontend) and Render (API) are different sites, so the
+      // login cookie must be SameSite=None; Secure. Localhost stays Lax.
+      sameSite: (secure ? 'none' : 'lax') as 'none' | 'lax',
+      secure,
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+    };
+  }
+
+  private setCookie(res: Response, token: string) {
+    res.cookie(this.auth.cookieName(), token, this.cookieOptions());
   }
 }

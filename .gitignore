@@ -9,14 +9,14 @@ out/
 coverage/
 *.tsbuildinfo
 
-# secrets and local env — keep .env.example
+# secrets and local env - keep .env.example
 .env
 .env.*
 !.env.example
 
-# user uploads (photos, certificates)
-uploads/
-backend/uploads/
+# user-uploaded photos and certificates (not the Nest uploads module)
+/uploads/
+/backend/uploads/
 
 # logs
 *.log

@@ -16,6 +16,7 @@ function RegisterForm() {
     lastName: "",
     email: "",
     password: "",
+    confirm: "",
     country: "",
     phone: "",
   });
@@ -24,10 +25,15 @@ function RegisterForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (form.password !== form.confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
     try {
+      const { confirm: _confirm, ...payload } = form;
       await api("/auth/register", {
         method: "POST",
-        body: JSON.stringify({ ...form, role }),
+        body: JSON.stringify({ ...payload, role }),
       });
       await refresh();
       router.push(role === "TEACHER" ? "/dashboard/profile" : "/dashboard");
@@ -37,35 +43,57 @@ function RegisterForm() {
   }
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-16">
-      <h1 className="font-display text-4xl text-navy">Create your account</h1>
-      <div className="mt-6 grid grid-cols-2 rounded-full bg-white p-1">
-        {["STUDENT", "TEACHER"].map((item) => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => setRole(item)}
-            className={`rounded-full py-2 text-sm ${role === item ? "bg-navy text-cream" : "text-navy"}`}
-          >
-            {item === "STUDENT" ? "I want to learn" : "I want to teach"}
-          </button>
-        ))}
-      </div>
-      <form onSubmit={onSubmit} className="mt-6 space-y-3 rounded-3xl bg-white p-6">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <input className="rounded-2xl border border-navy/10 px-4 py-3" placeholder="First name" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} required />
-          <input className="rounded-2xl border border-navy/10 px-4 py-3" placeholder="Last name" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} required />
+    <div className="grid min-h-[70vh] md:grid-cols-2">
+      <div className="relative hidden md:block">
+        <img src={role === "TEACHER" ? "/images/teacher-walk.jpg" : "/images/hero.jpg"} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-navy/50" />
+        <div className="absolute bottom-10 left-10 right-10 text-cream">
+          <p className="font-display text-4xl">
+            {role === "TEACHER" ? "Teach on your terms." : "Start with the right teacher."}
+          </p>
+          <p className="mt-3 max-w-md text-cream/75">
+            {role === "TEACHER"
+              ? "Keep 100% of lesson fees. Advertising credits are only used when a new student contacts you."
+              : "Create a free student account. Contacting a teacher never costs you money on Merit."}
+          </p>
         </div>
-        <input className="w-full rounded-2xl border border-navy/10 px-4 py-3" type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-        <input className="w-full rounded-2xl border border-navy/10 px-4 py-3" placeholder="Country" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} required />
-        <input className="w-full rounded-2xl border border-navy/10 px-4 py-3" placeholder="Phone (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-        <input className="w-full rounded-2xl border border-navy/10 px-4 py-3" type="password" minLength={8} placeholder="Password (min 8 characters)" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
-        {error && <p className="text-sm text-red-700">{error}</p>}
-        <button className="w-full rounded-full bg-navy py-3 text-cream">Create account</button>
-      </form>
-      <p className="mt-4 text-sm text-navy/70">
-        Already registered? <Link href="/login">Log in</Link>
-      </p>
+      </div>
+      <div className="px-6 py-12">
+        <div className="mx-auto w-full max-w-md">
+          <h1 className="font-display text-4xl text-navy">Create your account</h1>
+          <div className="mt-6 grid grid-cols-2 rounded-full bg-white p-1">
+            {["STUDENT", "TEACHER"].map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setRole(item)}
+                className={`rounded-full py-2 text-sm ${role === item ? "bg-navy text-cream" : "text-navy"}`}
+              >
+                {item === "STUDENT" ? "I want to learn" : "I want to teach"}
+              </button>
+            ))}
+          </div>
+          <form onSubmit={onSubmit} className="mt-6 space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input className="field" placeholder="First name" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} required />
+              <input className="field" placeholder="Last name" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} required />
+            </div>
+            <input className="field" type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+            <input className="field" placeholder="Country" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} required />
+            <input className="field" placeholder="Phone (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <input className="field" type="password" minLength={8} placeholder="Password (min 8 characters)" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+            <input className="field" type="password" minLength={8} placeholder="Confirm password" value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} required />
+            {error && <p className="text-sm text-red-700">{error}</p>}
+            <button className="btn-primary w-full">Create account</button>
+            <p className="text-center text-xs leading-5 text-navy/50">
+              By creating an account you agree that lesson fees are paid to teachers directly and that Merit is an advertising marketplace.
+            </p>
+          </form>
+          <p className="mt-4 text-sm text-navy/70">
+            Already registered? <Link href="/login">Log in</Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

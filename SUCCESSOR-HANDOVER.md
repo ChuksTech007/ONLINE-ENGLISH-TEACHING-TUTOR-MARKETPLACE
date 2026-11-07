@@ -1,4 +1,4 @@
-# Successor handover — Merit English marketplace
+# Successor handover - Merit English marketplace
 
 **Status: MVP is complete and runnable. The full specification is not.**
 
@@ -14,9 +14,9 @@ A working first version of the marketplace, using the stack the spec asked for:
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js (App Router) + Tailwind — `frontend/` |
-| Backend | NestJS REST API — `backend/` |
-| Database | PostgreSQL + Prisma — `backend/prisma/` |
+| Frontend | Next.js (App Router) + Tailwind - `frontend/` |
+| Backend | NestJS REST API - `backend/` |
+| Database | PostgreSQL + Prisma - `backend/prisma/` |
 | Auth | JWT in an httpOnly cookie, role-based access (student / teacher / admin) |
 
 The commercial loop is live and has been tested:
@@ -161,11 +161,11 @@ Wallet money must stay decimal (Prisma `Decimal`), transactional, and ledger-bas
 | Student pays teacher directly; no lesson commission | Yes (by design; platform never takes lesson money) |
 | Admin refund is a recorded credit transaction | Yes |
 | Admin changes contact fee; new fee applies going forward | Yes |
-| Teacher buys $20 **after verified payment** | **No** — wallet is credited without a payment gateway |
+| Teacher buys $20 **after verified payment** | **No** - wallet is credited without a payment gateway |
 
 ---
 
-## 6. What remains for the full spec — and what you need to finish it
+## 6. What remains for the full spec - and what you need to finish it
 
 Work below is grouped by what the next team must **obtain** versus what is **code-only**.
 
@@ -252,7 +252,7 @@ Work below is grouped by what the next team must **obtain** versus what is **cod
 |---|---|
 | Zoom API | Zoom Marketplace app (Client ID, Secret, account) |
 | Google Meet API | Google Cloud OAuth; Meet via API often needs Google Workspace |
-| Jitsi (no vendor) | Nothing — we can generate `https://meet.jit.si/merit-{lessonId}` |
+| Jitsi (no vendor) | Nothing - we can generate `https://meet.jit.si/merit-{lessonId}` |
 
 Do not block launch on Zoom/Meet APIs. Paste-a-link is enough for V1.
 
@@ -266,7 +266,7 @@ Do not block launch on Zoom/Meet APIs. Paste-a-link is enough for V1.
 
 ## 7. Recommended order for the next team
 
-1. **Stripe (or PayPal) + webhooks + idempotent wallet credit** — without this, advertising revenue is not real.  
+1. **Stripe (or PayPal) + webhooks + idempotent wallet credit** - without this, advertising revenue is not real.  
 2. **Email provider + verification + password reset + lesson reminder emails.**  
 3. **CMS, training, Terms/Privacy, organic vs promoted copy.**  
 4. **Disputes, CSV export, spam controls, student “My Teachers”.**  
