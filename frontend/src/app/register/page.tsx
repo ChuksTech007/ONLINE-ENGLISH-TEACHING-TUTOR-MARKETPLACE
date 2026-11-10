@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { PasswordField } from "@/components/PasswordField";
 
 function RegisterForm() {
   const router = useRouter();
@@ -81,8 +82,22 @@ function RegisterForm() {
             <input className="field" type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
             <input className="field" placeholder="Country" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} required />
             <input className="field" placeholder="Phone (optional)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-            <input className="field" type="password" minLength={8} placeholder="Password (min 8 characters)" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
-            <input className="field" type="password" minLength={8} placeholder="Confirm password" value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} required />
+            <PasswordField
+              value={form.password}
+              onChange={(password) => setForm({ ...form, password })}
+              placeholder="Password (min 8 characters)"
+              minLength={8}
+              required
+              autoComplete="new-password"
+            />
+            <PasswordField
+              value={form.confirm}
+              onChange={(confirm) => setForm({ ...form, confirm })}
+              placeholder="Confirm password"
+              minLength={8}
+              required
+              autoComplete="new-password"
+            />
             {error && <p className="text-sm text-red-700">{error}</p>}
             <button className="btn-primary w-full">Create account</button>
             <p className="text-center text-xs leading-5 text-navy/50">

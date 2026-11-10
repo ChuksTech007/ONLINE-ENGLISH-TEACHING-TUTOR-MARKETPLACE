@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { PasswordField } from "@/components/PasswordField";
 
 function LoginForm() {
   const router = useRouter();
@@ -47,8 +48,14 @@ function LoginForm() {
           <h1 className="font-display text-4xl text-navy">Log in</h1>
           <p className="mt-2 text-sm text-navy/60">Students, teachers and administrators use the same door.</p>
           <form onSubmit={onSubmit} className="mt-8 space-y-4">
-            <input className="field" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <input className="field" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <input className="field" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+            <PasswordField
+              value={password}
+              onChange={setPassword}
+              placeholder="Password"
+              required
+              autoComplete="current-password"
+            />
             {error && <p className="text-sm text-red-700">{error}</p>}
             <button className="btn-primary w-full">Continue</button>
           </form>
