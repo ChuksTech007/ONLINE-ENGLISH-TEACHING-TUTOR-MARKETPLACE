@@ -22,6 +22,7 @@ function RegisterForm() {
     phone: "",
   });
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,6 +31,7 @@ function RegisterForm() {
       setError("Passwords do not match.");
       return;
     }
+    setBusy(true);
     try {
       const { confirm: _confirm, ...payload } = form;
       await api("/auth/register", {
@@ -40,6 +42,8 @@ function RegisterForm() {
       router.push(role === "TEACHER" ? "/dashboard/profile" : "/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -99,7 +103,9 @@ function RegisterForm() {
               autoComplete="new-password"
             />
             {error && <p className="text-sm text-red-700">{error}</p>}
-            <button className="btn-primary w-full">Create account</button>
+            <button className="btn-primary w-full" disabled={busy}>
+              {busy ? "Creating account…" : "Create account"}
+            </button>
             <p className="text-center text-xs leading-5 text-navy/50">
               By creating an account you agree that lesson fees are paid to teachers directly and that Merit is an advertising marketplace.
             </p>

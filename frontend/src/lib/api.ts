@@ -1,10 +1,9 @@
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-const BACKEND = API.replace(/\/api$/, "");
+const API = "/api";
 
 export function mediaUrl(path?: string | null) {
   if (!path) return "";
   if (path.startsWith("http")) return path;
-  return `${BACKEND}${path}`;
+  return path;
 }
 
 export class ApiError extends Error {
@@ -23,11 +22,24 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   if (!isForm && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
-  const res = await fetch(`${API}${path}`, {
-    ...init,
-    credentials: "include",
-    headers,
-  });
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 45000);
+  let res: Response;
+  try {
+    res = await fetch(`${API}${path}`, {
+      ...init,
+      credentials: "include",
+      headers,
+      signal: init?.signal ?? ctrl.signal,
+    });
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new ApiError("The server is waking up. Wait a few seconds and try again.", 503);
+    }
+    throw new ApiError("Could not reach the server. Check your connection and try again.", 503);
+  } finally {
+    clearTimeout(timer);
+  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const message = Array.isArray(data.message)

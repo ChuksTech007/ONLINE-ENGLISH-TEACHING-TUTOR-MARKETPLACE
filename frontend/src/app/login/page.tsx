@@ -14,10 +14,12 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setBusy(true);
     try {
       const res = await api<{ user: { role: string } }>("/auth/login", {
         method: "POST",
@@ -30,6 +32,8 @@ function LoginForm() {
       else router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -57,7 +61,10 @@ function LoginForm() {
               autoComplete="current-password"
             />
             {error && <p className="text-sm text-red-700">{error}</p>}
-            <button className="btn-primary w-full">Continue</button>
+            <button className="btn-primary w-full" disabled={busy}>
+              {busy ? "Signing in…" : "Continue"}
+            </button>
+            <p className="text-center text-xs text-navy/45">The first sign-in after idle can take up to a minute while the API starts.</p>
           </form>
           <div className="mt-8 rounded-[1.4rem] bg-white p-4">
             <p className="text-xs uppercase tracking-[0.16em] text-navy/45">Demo accounts · Password123!</p>

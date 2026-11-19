@@ -22,8 +22,19 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+  const allowed = [
+    process.env.FRONTEND_URL,
+    'http://localhost:3000',
+    'https://englishtutor-eta.vercel.app',
+  ].filter(Boolean) as string[];
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
     credentials: true,
   });
   app.useStaticAssets(uploads, { prefix: '/uploads/' });
