@@ -19,7 +19,6 @@ const tones: Record<string, string> = {
   REFUND: "bg-emerald-50 text-emerald-800",
   FEATURED: "bg-gold text-navy",
   OPEN: "bg-emerald-50 text-emerald-800",
-  CLOSED: "bg-navy/10 text-navy/60",
 };
 
 export function StatusBadge({ value }: { value: string }) {
