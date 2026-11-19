@@ -14,6 +14,7 @@ import {
   Shield,
   Users,
   Landmark,
+  Headphones,
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -39,6 +40,7 @@ const adminLinks = [
   { href: "/dashboard/admin", label: "Admin home", icon: Shield },
   { href: "/dashboard/admin/teachers", label: "Teachers", icon: Users },
   { href: "/dashboard/admin/finance", label: "Finance", icon: Landmark },
+  { href: "/dashboard/admin/support", label: "Customer chat", icon: Headphones },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

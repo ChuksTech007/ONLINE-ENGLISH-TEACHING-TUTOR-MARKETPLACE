@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { Shield, Users, Landmark } from "lucide-react";
+import { Shield, Users, Landmark, Headphones } from "lucide-react";
 
 function label(key: string) {
   return key
@@ -37,6 +37,7 @@ export default function AdminHomePage() {
         {[
           { href: "/dashboard/admin/teachers", label: "Review teacher applications", icon: Users },
           { href: "/dashboard/admin/finance", label: "Advertising finance", icon: Landmark },
+          { href: "/dashboard/admin/support", label: "Customer live chat", icon: Headphones },
           { href: "/trust", label: "Public trust page", icon: Shield },
         ].map((item) => (
           <Link key={item.href} href={item.href} className="card-lift flex items-center gap-3 rounded-[1.4rem] bg-white p-4 shadow-sm">

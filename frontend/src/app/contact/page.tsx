@@ -16,7 +16,7 @@ export default function ContactPage() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2">
         <div>
           <h2 className="font-display text-3xl text-navy">Write to the team</h2>
-          <p className="mt-3 text-navy/70">Typical replies cover teacher approval, wallet deductions and account access. We do not mediate lesson payments between you and a teacher.</p>
+          <p className="mt-3 text-navy/70">Typical replies cover teacher approval, wallet deductions and account access. We do not mediate lesson payments between you and a teacher. You can also use the live chat in the corner of any page.</p>
           <div className="mt-8 space-y-4 text-navy/80">
             <p><span className="text-navy/50">Email</span><br />support@merit.local</p>
             <p><span className="text-navy/50">Hours</span><br />Monday–Friday, replies within one working day</p>

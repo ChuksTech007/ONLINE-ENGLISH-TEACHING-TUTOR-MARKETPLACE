@@ -23,6 +23,7 @@ export class AdminService {
       purchases,
       deductions,
       settings,
+      openSupportChats,
     ] = await Promise.all([
       this.prisma.teacherProfile.count(),
       this.prisma.teacherProfile.count({ where: { status: 'APPROVED' } }),
@@ -38,6 +39,7 @@ export class AdminService {
         _sum: { amount: true },
       }),
       this.prisma.platformSettings.findUnique({ where: { id: 'default' } }),
+      this.prisma.supportThread.count({ where: { status: 'OPEN' } }),
     ]);
 
     return {
@@ -49,6 +51,7 @@ export class AdminService {
       creditSales: moneyString(purchases._sum.amount ?? 0),
       creditDeductions: moneyString(deductions._sum.amount ?? 0),
       contactFee: moneyString(settings?.contactFee ?? 0),
+      openSupportChats,
     };
   }
 

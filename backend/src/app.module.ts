@@ -15,6 +15,7 @@ import { UploadsModule } from './uploads/uploads.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { SettingsModule } from './settings/settings.module';
 import { StudentsModule } from './students/students.module';
+import { SupportModule } from './support/support.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { StudentsModule } from './students/students.module';
     AdminModule,
     UploadsModule,
     SettingsModule,
+    SupportModule,
   ],
   providers: [
     {

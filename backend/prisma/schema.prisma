@@ -75,10 +75,12 @@ model User {
 
   teacherProfile TeacherProfile?
   studentProfile StudentProfile?
-  sentMessages   Message[]
-  notifications  Notification[]
-  adminLogs      AdminAuditLog[]
-  verifyTokens   EmailVerifyToken[]
+  sentMessages    Message[]
+  notifications   Notification[]
+  adminLogs       AdminAuditLog[]
+  verifyTokens    EmailVerifyToken[]
+  supportThreads  SupportThread[]
+  supportMessages SupportMessage[]
 }
 
 model EmailVerifyToken {
@@ -343,4 +345,38 @@ model AdminAuditLog {
   reason     String?
   metadata   Json?
   createdAt  DateTime @default(now())
+}
+
+enum SupportStatus {
+  OPEN
+  CLOSED
+}
+
+model SupportThread {
+  id            String        @id @default(cuid())
+  visitorId     String        @unique
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name          String
+  email         String
+  status        SupportStatus @default(OPEN)
+  lastMessageAt DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  messages      SupportMessage[]
+
+  @@index([status, lastMessageAt])
+}
+
+model SupportMessage {
+  id        String        @id @default(cuid())
+  threadId  String
+  thread    SupportThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  body      String
+  fromStaff Boolean       @default(false)
+  senderId  String?
+  sender    User?         @relation(fields: [senderId], references: [id], onDelete: SetNull)
+  createdAt DateTime      @default(now())
+
+  @@index([threadId, createdAt])
 }
