@@ -53,7 +53,7 @@ export class LessonsService {
       type: 'LESSON_REQUEST',
       title: 'New lesson request',
       body: `${student.user.firstName} requested a lesson.`,
-      link: '/dashboard/lessons',
+      link: '/dashboard/teacher/enquiries',
     });
     return lesson;
   }

@@ -1,6 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+  const pathname = usePathname();
+  if (pathname.startsWith("/dashboard")) return null;
+
   return (
     <footer className="mt-auto bg-navy text-cream">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-5">
@@ -27,7 +33,7 @@ export function Footer() {
           <div className="mt-4 flex flex-col gap-2 text-sm text-cream/80">
             <Link href="/become-a-teacher">Become a teacher</Link>
             <Link href="/training">Free teacher training</Link>
-            <Link href="/register?role=TEACHER">Create a teacher profile</Link>
+            <Link href="/register/teacher">Create a teacher profile</Link>
           </div>
         </div>
         <div>

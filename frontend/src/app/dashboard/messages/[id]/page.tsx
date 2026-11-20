@@ -47,7 +47,7 @@ export default function ThreadPage() {
   return (
     <div className="flex min-h-[32rem] flex-col rounded-[1.6rem] bg-white p-5 shadow-sm">
       <div className="border-b border-navy/10 pb-4">
-        <Link href="/dashboard/messages" className="text-xs text-navy/50">
+        <Link href={user?.role === "TEACHER" ? "/dashboard/teacher/messages" : "/dashboard/messages"} className="text-xs text-navy/50">
           All conversations
         </Link>
         <h1 className="mt-1 font-display text-2xl text-navy">

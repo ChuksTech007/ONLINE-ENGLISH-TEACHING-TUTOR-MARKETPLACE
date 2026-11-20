@@ -23,6 +23,14 @@ export class PaymentMethodDto {
 export class UpdateTeacherProfileDto {
   @IsOptional()
   @IsString()
+  firstName?: string;
+
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
+  @IsOptional()
+  @IsString()
   bio?: string;
 
   @IsOptional()

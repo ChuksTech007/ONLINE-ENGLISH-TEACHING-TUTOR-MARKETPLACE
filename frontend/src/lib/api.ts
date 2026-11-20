@@ -59,6 +59,8 @@ export type AuthUser = {
   phone?: string | null;
   country: string;
   timezone: string;
+  emailVerified?: boolean;
+  status?: string;
   teacher?: {
     id: string;
     slug: string;

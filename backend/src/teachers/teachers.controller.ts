@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Put,
   Query,
   UseGuards,
@@ -82,6 +83,13 @@ export class TeachersController {
     @Body() dto: ReplaceAvailabilityDto,
   ) {
     return this.teachers.replaceAvailability(user.id, dto.slots);
+  }
+
+  @Post('me/submit')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.TEACHER)
+  submit(@CurrentUser() user: { id: string }) {
+    return this.teachers.submitForApproval(user.id);
   }
 
   @Get(':slug')

@@ -10,6 +10,7 @@ type Teacher = {
   firstName: string;
   lastName: string;
   email: string;
+  emailVerified?: boolean;
   country: string;
   status: string;
   featured: boolean;
@@ -73,7 +74,7 @@ export default function AdminTeachersPage() {
                       {row.firstName} {row.lastName}
                     </div>
                     <div className="text-navy/50">
-                      {row.email} · {row.country}
+                      {row.email} · {row.country} · {row.emailVerified ? "Email verified" : "Email unverified"}
                     </div>
                   </td>
                   <td>
@@ -92,6 +93,9 @@ export default function AdminTeachersPage() {
                     </button>
                     <button className="btn-soft" onClick={() => setStatus(row.id, "SUSPENDED")}>
                       Suspend
+                    </button>
+                    <button className="btn-soft" onClick={() => setStatus(row.id, "APPROVED")}>
+                      Reactivate
                     </button>
                     <button className="btn-soft" onClick={() => toggleFeatured(row.id, row.featured)}>
                       {row.featured ? "Unfeature" : "Feature"}

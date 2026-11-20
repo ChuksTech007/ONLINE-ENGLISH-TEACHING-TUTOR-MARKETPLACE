@@ -52,7 +52,7 @@ export class AuthService {
           firstName: dto.firstName.trim(),
           lastName: dto.lastName.trim(),
           phone: dto.phone,
-          country: dto.country,
+          country: (dto.country || 'International').trim(),
           timezone: dto.timezone || 'UTC',
           emailVerified: false,
         },
@@ -63,7 +63,7 @@ export class AuthService {
           data: {
             userId: created.id,
             slug,
-            country: dto.country,
+            country: (dto.country || 'International').trim(),
           },
         });
         await tx.wallet.create({ data: { teacherId: teacher.id } });
@@ -146,6 +146,53 @@ export class AuthService {
     });
     await this.prisma.emailVerifyToken.delete({ where: { id: record.id } });
     return { verified: true };
+  }
+
+  async confirmEmail(userId: string) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { emailVerified: true },
+    });
+    await this.prisma.emailVerifyToken.deleteMany({ where: { userId } });
+    return this.me(userId);
+  }
+
+  async resendVerification(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException();
+    if (user.emailVerified) return { sent: true, alreadyVerified: true };
+    await this.prisma.emailVerifyToken.deleteMany({ where: { userId } });
+    await this.prisma.emailVerifyToken.create({
+      data: {
+        userId,
+        token: randomBytes(24).toString('hex'),
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      },
+    });
+    return { sent: true, alreadyVerified: false };
+  }
+
+  async updateAccount(
+    userId: string,
+    data: {
+      firstName?: string;
+      lastName?: string;
+      phone?: string;
+      country?: string;
+      timezone?: string;
+    },
+  ) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName: data.firstName?.trim(),
+        lastName: data.lastName?.trim(),
+        phone: data.phone,
+        country: data.country?.trim(),
+        timezone: data.timezone,
+      },
+    });
+    return this.me(userId);
   }
 
   private async issue(userId: string, email: string, role: Role) {

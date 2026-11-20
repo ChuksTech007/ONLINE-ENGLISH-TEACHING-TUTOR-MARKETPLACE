@@ -31,7 +31,7 @@ export default async function TrainingArticlePage({ params }: { params: Promise<
         {article.body.map((p) => (
           <p key={p.slice(0, 24)}>{p}</p>
         ))}
-        <Link href="/register?role=TEACHER" className="btn-primary mt-6 inline-flex">
+        <Link href="/register/teacher" className="btn-primary mt-6 inline-flex">
           Create your teacher profile
         </Link>
       </div>

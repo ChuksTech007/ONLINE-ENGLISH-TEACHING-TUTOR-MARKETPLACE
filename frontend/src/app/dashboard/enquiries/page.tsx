@@ -53,7 +53,7 @@ export default function EnquiriesPage() {
                 ? "When a new student writes, the first contact appears here and the advertising wallet records the deduction."
                 : "Browse the directory and send a short introduction. Contacting a teacher is free for students."
             }
-            href={user?.role === "STUDENT" ? "/teachers" : "/dashboard/profile"}
+            href={user?.role === "STUDENT" ? "/teachers" : "/dashboard/teacher/profile"}
             action={user?.role === "STUDENT" ? "Find a teacher" : "Polish your profile"}
             image="/images/student-study.jpg"
           />

@@ -19,7 +19,10 @@ export function Navbar() {
   const { user } = useAuth();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const dash = user?.role === "ADMIN" ? "/dashboard/admin" : "/dashboard";
+  const dash =
+    user?.role === "ADMIN" ? "/dashboard/admin" : user?.role === "TEACHER" ? "/dashboard/teacher" : "/dashboard";
+
+  if (pathname.startsWith("/dashboard")) return null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-navy/10 bg-cream/85 backdrop-blur-md">

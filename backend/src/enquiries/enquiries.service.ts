@@ -177,7 +177,7 @@ export class EnquiriesService {
       type: 'NEW_ENQUIRY',
       title: 'New student enquiry',
       body: `${student.user.firstName} ${student.user.lastName} contacted you.`,
-      link: '/dashboard/enquiries',
+      link: '/dashboard/teacher/enquiries',
     });
     await this.notifications.create({
       userId: studentUserId,
@@ -193,7 +193,7 @@ export class EnquiriesService {
         type: 'LOW_CREDIT',
         title: 'Advertising credit is running low',
         body: 'Top up your wallet to keep receiving new student enquiries.',
-        link: '/dashboard/wallet',
+        link: '/dashboard/teacher/recharge',
       });
     }
 

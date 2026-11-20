@@ -122,6 +122,8 @@ export class TeachersService {
     const userData: Prisma.UserUpdateInput = {};
     if (dto.timezone) userData.timezone = dto.timezone;
     if (dto.country) userData.country = dto.country;
+    if (dto.firstName) userData.firstName = dto.firstName.trim();
+    if (dto.lastName) userData.lastName = dto.lastName.trim();
 
     const updated = await this.prisma.teacherProfile.update({
       where: { id: teacher.id },
@@ -199,24 +201,55 @@ export class TeachersService {
   async dashboard(userId: string) {
     const teacher = await this.prisma.teacherProfile.findUnique({
       where: { userId },
-      include: { wallet: true },
+      include: { user: true, wallet: true, availability: true, certificates: true },
     });
     if (!teacher) throw new NotFoundException('Teacher profile not found');
 
-    const [enquiryCount, studentCount, upcoming, completed] = await Promise.all([
-      this.prisma.enquiry.count({ where: { teacherId: teacher.id } }),
-      this.prisma.studentTeacherContact.count({ where: { teacherId: teacher.id } }),
-      this.prisma.lesson.count({
-        where: {
-          teacherId: teacher.id,
-          status: { in: ['REQUESTED', 'ACCEPTED', 'SCHEDULED'] },
-          startAt: { gte: new Date() },
-        },
-      }),
-      this.prisma.lesson.count({
-        where: { teacherId: teacher.id, status: 'COMPLETED' },
-      }),
-    ]);
+    const [enquiryCount, studentCount, upcoming, completed, recentMessages, recentTx] =
+      await Promise.all([
+        this.prisma.enquiry.count({ where: { teacherId: teacher.id } }),
+        this.prisma.studentTeacherContact.count({ where: { teacherId: teacher.id } }),
+        this.prisma.lesson.count({
+          where: {
+            teacherId: teacher.id,
+            status: { in: ['REQUESTED', 'ACCEPTED', 'SCHEDULED'] },
+            startAt: { gte: new Date() },
+          },
+        }),
+        this.prisma.lesson.count({
+          where: { teacherId: teacher.id, status: 'COMPLETED' },
+        }),
+        this.prisma.message.findMany({
+          where: { conversation: { teacherId: teacher.id } },
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+          include: {
+            conversation: {
+              include: { student: { include: { user: true } } },
+            },
+          },
+        }),
+        teacher.wallet
+          ? this.prisma.walletTransaction.findMany({
+              where: { walletId: teacher.wallet.id },
+              orderBy: { createdAt: 'desc' },
+              take: 8,
+            })
+          : Promise.resolve([]),
+      ]);
+
+    const checks = [
+      Boolean(teacher.photoUrl),
+      Boolean(teacher.bio?.trim()),
+      Boolean(teacher.qualifications?.trim()),
+      teacher.specializations.length > 0,
+      Number(teacher.hourlyRate) > 0,
+      Boolean(teacher.city?.trim() && teacher.country?.trim()),
+      teacher.languages.length > 0,
+      teacher.availability.length > 0,
+      Boolean(teacher.preferredPlatform),
+    ];
+    const profileCompletion = Math.round((checks.filter(Boolean).length / checks.length) * 100);
 
     return {
       profileViews: teacher.profileViews,
@@ -230,7 +263,61 @@ export class TeachersService {
       averageRating: moneyString(teacher.averageRating),
       reviewCount: teacher.reviewCount,
       status: teacher.status,
+      rejectionReason: teacher.rejectionReason,
+      profileCompletion,
+      slug: teacher.slug,
+      emailVerified: teacher.user.emailVerified,
+      recentMessages: recentMessages.map((message) => ({
+        id: message.id,
+        body: message.body,
+        createdAt: message.createdAt,
+        conversationId: message.conversationId,
+        from: `${message.conversation.student.user.firstName} ${message.conversation.student.user.lastName}`,
+      })),
+      recentDeductions: recentTx
+        .filter((tx) => tx.type === 'DEDUCTION')
+        .slice(0, 5)
+        .map((tx) => this.serializeDashboardTx(tx)),
+      rechargeHistory: recentTx
+        .filter((tx) => tx.type === 'PURCHASE' || tx.type === 'ADMIN_CREDIT')
+        .slice(0, 5)
+        .map((tx) => this.serializeDashboardTx(tx)),
     };
+  }
+
+  private serializeDashboardTx(tx: {
+    id: string;
+    type: string;
+    amount: Prisma.Decimal;
+    newBalance: Prisma.Decimal;
+    description: string;
+    createdAt: Date;
+  }) {
+    return {
+      id: tx.id,
+      type: tx.type,
+      amount: moneyString(tx.amount),
+      newBalance: moneyString(tx.newBalance),
+      description: tx.description,
+      createdAt: tx.createdAt,
+    };
+  }
+
+  async submitForApproval(userId: string) {
+    const teacher = await this.prisma.teacherProfile.findUnique({ where: { userId } });
+    if (!teacher) throw new NotFoundException('Teacher profile not found');
+    if (teacher.status === TeacherStatus.SUSPENDED) {
+      throw new ForbiddenException('This account is suspended');
+    }
+    const updated = await this.prisma.teacherProfile.update({
+      where: { id: teacher.id },
+      data: {
+        status: TeacherStatus.PENDING,
+        rejectionReason: null,
+      },
+      include: { user: true, wallet: true, availability: true, certificates: true },
+    });
+    return this.serializePrivate(updated);
   }
 
   serializePublic(

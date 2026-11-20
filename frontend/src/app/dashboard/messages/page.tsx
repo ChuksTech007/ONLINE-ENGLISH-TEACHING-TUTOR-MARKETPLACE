@@ -30,7 +30,7 @@ export default function MessagesPage() {
           <EmptyState
             title="No conversations yet"
             body="A thread opens when a student sends an enquiry. Keep lesson times, payment notes and meeting links in the thread so both of you have a record."
-            href={user?.role === "STUDENT" ? "/teachers" : "/dashboard/enquiries"}
+            href={user?.role === "STUDENT" ? "/teachers" : "/dashboard/teacher/enquiries"}
             action={user?.role === "STUDENT" ? "Find a teacher" : "Open enquiries"}
             image="/images/library.jpg"
           />
@@ -43,7 +43,7 @@ export default function MessagesPage() {
           return (
             <Link
               key={row.id}
-              href={`/dashboard/messages/${row.id}`}
+              href={`${user?.role === "TEACHER" ? "/dashboard/teacher/messages" : "/dashboard/messages"}/${row.id}`}
               className="card-lift flex items-center gap-4 rounded-[1.6rem] bg-white p-5 shadow-sm"
             >
               <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-navy font-display text-lg text-gold">

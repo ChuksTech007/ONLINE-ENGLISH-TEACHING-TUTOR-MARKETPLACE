@@ -89,7 +89,41 @@ export class WalletsService {
       type: 'WALLET_RECHARGE',
       title: 'Advertising credits added',
       body: `${moneyString(pack.creditAmount)} credits were added to your wallet.`,
-      link: '/dashboard/wallet',
+      link: '/dashboard/teacher/wallet',
+    });
+
+    return wallet;
+  }
+
+  async purchaseCustom(userId: string, amount: number) {
+    if (!Number.isFinite(amount) || amount < 5) {
+      throw new BadRequestException('Minimum advertising credit purchase is $5');
+    }
+    const teacher = await this.prisma.teacherProfile.findUnique({
+      where: { userId },
+      include: { wallet: true },
+    });
+    if (!teacher?.wallet) throw new NotFoundException('Wallet not found');
+
+    const credit = new Prisma.Decimal(amount.toFixed(2));
+    const wallet = await this.creditWallet({
+      teacherId: teacher.id,
+      amount: credit,
+      type: WalletTxType.PURCHASE,
+      description: `Custom advertising credit recharge of $${credit.toFixed(2)}`,
+      metadata: {
+        custom: true,
+        price: credit.toFixed(2),
+        currency: 'USD',
+      },
+    });
+
+    await this.notifications.create({
+      userId,
+      type: 'WALLET_RECHARGE',
+      title: 'Advertising credits added',
+      body: `${moneyString(credit)} credits were added to your wallet.`,
+      link: '/dashboard/teacher/wallet',
     });
 
     return wallet;
@@ -228,7 +262,7 @@ export class WalletsService {
             ? 'Advertising credit refunded'
             : 'Wallet updated by administrator',
         body: params.reason,
-        link: '/dashboard/wallet',
+        link: '/dashboard/teacher/wallet',
       });
     }
     return result;

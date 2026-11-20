@@ -1,11 +1,36 @@
-import { Body, Controller, Get, Post, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { IsOptional, IsString, MinLength } from 'class-validator';
 import type { Response } from 'express';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+
+class UpdateAccountDto {
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  firstName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  lastName?: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  country?: string;
+
+  @IsOptional()
+  @IsString()
+  timezone?: string;
+}
 
 @Controller('auth')
 export class AuthController {
@@ -55,6 +80,24 @@ export class AuthController {
   @Get('verify')
   verify(@Query('token') token: string) {
     return this.auth.verifyEmail(token);
+  }
+
+  @Post('verify/complete')
+  @UseGuards(JwtAuthGuard)
+  confirmEmail(@CurrentUser() user: { id: string }) {
+    return this.auth.confirmEmail(user.id);
+  }
+
+  @Post('verify/resend')
+  @UseGuards(JwtAuthGuard)
+  resendVerification(@CurrentUser() user: { id: string }) {
+    return this.auth.resendVerification(user.id);
+  }
+
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  updateAccount(@CurrentUser() user: { id: string }, @Body() dto: UpdateAccountDto) {
+    return this.auth.updateAccount(user.id, dto);
   }
 
   private cookieOptions() {

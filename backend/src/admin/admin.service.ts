@@ -67,8 +67,10 @@ export class AdminService {
       firstName: t.user.firstName,
       lastName: t.user.lastName,
       email: t.user.email,
+      emailVerified: t.user.emailVerified,
       country: t.country || t.user.country,
       status: t.status,
+      rejectionReason: t.rejectionReason,
       featured: t.featured,
       experienceYears: t.experienceYears,
       hourlyRate: moneyString(t.hourlyRate),
@@ -111,7 +113,7 @@ export class AdminService {
         status === 'APPROVED'
           ? 'Your profile can now appear in the teacher directory.'
           : reason || `Status changed to ${status}.`,
-      link: '/dashboard/profile',
+      link: '/dashboard/teacher/profile',
     });
     return updated;
   }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { PasswordField } from "@/components/PasswordField";
@@ -11,7 +11,6 @@ function RegisterForm() {
   const router = useRouter();
   const params = useSearchParams();
   const { refresh } = useAuth();
-  const [role, setRole] = useState(params.get("role") === "TEACHER" ? "TEACHER" : "STUDENT");
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -23,6 +22,10 @@ function RegisterForm() {
   });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (params.get("role") === "TEACHER") router.replace("/register/teacher");
+  }, [params, router]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,10 +39,10 @@ function RegisterForm() {
       const { confirm: _confirm, ...payload } = form;
       await api("/auth/register", {
         method: "POST",
-        body: JSON.stringify({ ...payload, role }),
+        body: JSON.stringify({ ...payload, role: "STUDENT" }),
       });
       await refresh();
-      router.push(role === "TEACHER" ? "/dashboard/profile" : "/dashboard");
+      router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
@@ -50,34 +53,17 @@ function RegisterForm() {
   return (
     <div className="grid min-h-[70vh] md:grid-cols-2">
       <div className="relative hidden md:block">
-        <img src={role === "TEACHER" ? "/images/teacher-walk.jpg" : "/images/hero.jpg"} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <img src="/images/hero.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-navy/50" />
         <div className="absolute bottom-10 left-10 right-10 text-cream">
-          <p className="font-display text-4xl">
-            {role === "TEACHER" ? "Teach on your terms." : "Start with the right teacher."}
-          </p>
-          <p className="mt-3 max-w-md text-cream/75">
-            {role === "TEACHER"
-              ? "Keep 100% of lesson fees. Advertising credits are only used when a new student contacts you."
-              : "Create a free student account. Contacting a teacher never costs you money on Merit."}
-          </p>
+          <p className="font-display text-4xl">Start with the right teacher.</p>
+          <p className="mt-3 max-w-md text-cream/75">Create a free student account. Contacting a teacher never costs you money on Merit.</p>
         </div>
       </div>
       <div className="px-6 py-12">
         <div className="mx-auto w-full max-w-md">
-          <h1 className="font-display text-4xl text-navy">Create your account</h1>
-          <div className="mt-6 grid grid-cols-2 rounded-full bg-white p-1">
-            {["STUDENT", "TEACHER"].map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setRole(item)}
-                className={`rounded-full py-2 text-sm ${role === item ? "bg-navy text-cream" : "text-navy"}`}
-              >
-                {item === "STUDENT" ? "I want to learn" : "I want to teach"}
-              </button>
-            ))}
-          </div>
+          <p className="text-xs uppercase tracking-[0.18em] text-gold">Student registration</p>
+          <h1 className="mt-2 font-display text-4xl text-navy">Create your account</h1>
           <form onSubmit={onSubmit} className="mt-6 space-y-3">
             <div className="grid gap-3 sm:grid-cols-2">
               <input className="field" placeholder="First name" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} required />
@@ -104,14 +90,14 @@ function RegisterForm() {
             />
             {error && <p className="text-sm text-red-700">{error}</p>}
             <button className="btn-primary w-full" disabled={busy}>
-              {busy ? "Creating account…" : "Create account"}
+              {busy ? "Creating account…" : "Create student account"}
             </button>
-            <p className="text-center text-xs leading-5 text-navy/50">
-              By creating an account you agree that lesson fees are paid to teachers directly and that Merit is an advertising marketplace.
-            </p>
           </form>
           <p className="mt-4 text-sm text-navy/70">
-            Already registered? <Link href="/login">Log in</Link>
+            Already registered? <Link href="/login">Student login</Link>
+          </p>
+          <p className="mt-2 text-sm text-navy/55">
+            Want to teach? <Link href="/become-a-teacher">Teach on Merit English</Link>
           </p>
         </div>
       </div>
